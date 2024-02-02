@@ -61,6 +61,16 @@ func main() {
 }
 ```
 
+Populate the info variables at compile-time:
+
+```shell
+go build -o main \
+    -ldflags "-X main.commit=$(git rev-parse --short HEAD) \
+        -X main.date=$(date --utc --iso-8601=seconds) \
+        -X main.version=1.0.0" \
+    main.go
+```
+
 ## license
 
 ```
