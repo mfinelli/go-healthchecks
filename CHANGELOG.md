@@ -2,6 +2,6 @@
 
 Healthchecks follows [semantic versioning](https://semver.org).
 
-## unreleased
+## v1.0.0 (2024/02/02)
 
 Initial release
