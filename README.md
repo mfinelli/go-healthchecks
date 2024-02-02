@@ -53,9 +53,11 @@ func main() {
                 },
         }
 
-        http.HandleFunc("/health", hc.Health())
         http.HandleFunc("/info", hc.Info())
         http.HandleFunc("/ping", hc.Ping())
+
+        // You may wish to put some auth middleware on this route
+        http.HandleFunc("/health", hc.Health())
 
         log.Fatal(http.ListenAndServe(":8000", nil))
 }
