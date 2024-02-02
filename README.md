@@ -34,9 +34,9 @@ func main() {
 
         hc := healthchecks.Config{
                 // you can omit any of these that you don't wish to expose
-                Version: version,
                 BuildDate: date,
                 GitSha: commit,
+                Version: version,
 
                 // You can also define a function somewhere else that returns
                 // the healthchecks.Healthcheck type:
