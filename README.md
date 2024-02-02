@@ -35,14 +35,14 @@ func main() {
         hc := healthchecks.Config{
                 // you can omit any of these that you don't wish to expose
                 BuildDate: date,
-                GitSha: commit,
-                Version: version,
+                GitSha:    commit,
+                Version:   version,
 
                 // You can also define a function somewhere else that returns
                 // the healthchecks.Healthcheck type:
                 // func MyHealthcheckSetup(...) healthchecks.Healthcheck {}
                 // Check: MyHealthcheckSetup(...),
-                Check: func (ctx context.Context) error {
+                Check: func(ctx context.Context) error {
                         if err := db.Ping(ctx); err != nil {
                                 return err
                         }
