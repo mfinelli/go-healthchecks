@@ -43,7 +43,7 @@ func main() {
                 // func MyHealthcheckSetup(...) healthchecks.Healthcheck {}
                 // Check: MyHealthcheckSetup(...),
                 Check: func (ctx context.Context) error {
-                        if err := c.DB.Ping(ctx); err != nil {
+                        if err := db.Ping(ctx); err != nil {
                                 return err
                         }
 
