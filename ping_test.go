@@ -27,6 +27,21 @@ import (
 )
 
 func TestPing(t *testing.T) {
+	t.Run("OPTIONS request", func(t *testing.T) {
+		c := &Config{}
+
+		req, err := http.NewRequest(http.MethodOptions, "/", nil)
+		assert.Nil(t, err)
+
+		w := httptest.NewRecorder()
+		h := http.HandlerFunc(c.Ping())
+		h.ServeHTTP(w, req)
+
+		assert.Equal(t, w.Code, http.StatusNoContent)
+		assert.Equal(t, w.Header().Get("Allow"), "HEAD, GET, OPTIONS")
+		assert.Empty(t, w.Body.String())
+	})
+
 	t.Run("non-GET requests", func(t *testing.T) {
 		c := &Config{}
 
@@ -49,15 +64,17 @@ func TestPing(t *testing.T) {
 			},
 		}
 
-		req, err := http.NewRequest(http.MethodGet, "/", nil)
-		assert.Nil(t, err)
+		for _, m := range []string{http.MethodHead, http.MethodGet} {
+			req, err := http.NewRequest(m, "/", nil)
+			assert.Nil(t, err)
 
-		w := httptest.NewRecorder()
-		h := http.HandlerFunc(c.Ping())
-		h.ServeHTTP(w, req)
+			w := httptest.NewRecorder()
+			h := http.HandlerFunc(c.Ping())
+			h.ServeHTTP(w, req)
 
-		assert.Equal(t, w.Code, http.StatusOK)
-		assert.Empty(t, w.Body.String())
+			assert.Equal(t, w.Code, http.StatusOK)
+			assert.Empty(t, w.Body.String())
+		}
 	})
 
 	t.Run("unsuccessful healthcheck", func(t *testing.T) {
@@ -67,14 +84,16 @@ func TestPing(t *testing.T) {
 			},
 		}
 
-		req, err := http.NewRequest(http.MethodGet, "/", nil)
-		assert.Nil(t, err)
+		for _, m := range []string{http.MethodHead, http.MethodGet} {
+			req, err := http.NewRequest(m, "/", nil)
+			assert.Nil(t, err)
 
-		w := httptest.NewRecorder()
-		h := http.HandlerFunc(c.Ping())
-		h.ServeHTTP(w, req)
+			w := httptest.NewRecorder()
+			h := http.HandlerFunc(c.Ping())
+			h.ServeHTTP(w, req)
 
-		assert.Equal(t, w.Code, http.StatusInternalServerError)
-		assert.Empty(t, w.Body.String())
+			assert.Equal(t, w.Code, http.StatusInternalServerError)
+			assert.Empty(t, w.Body.String())
+		}
 	})
 }

@@ -26,7 +26,7 @@ import "net/http"
 func (c *Config) Ping() handler {
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
-		case http.MethodGet:
+		case http.MethodHead, http.MethodGet:
 			w.Header().Set("Content-Type",
 				"text/plain; charset=utf-8")
 
@@ -37,6 +37,9 @@ func (c *Config) Ping() handler {
 			} else {
 				w.WriteHeader(http.StatusInternalServerError)
 			}
+		case http.MethodOptions:
+			w.Header().Set("Allow", "HEAD, GET, OPTIONS")
+			w.WriteHeader(http.StatusNoContent)
 		default:
 			http.Error(w, "405 method not allowed",
 				http.StatusMethodNotAllowed)
