@@ -22,12 +22,28 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestHealth(t *testing.T) {
+	t.Run("OPTIONS request", func(t *testing.T) {
+		c := &Config{}
+
+		req, err := http.NewRequest(http.MethodOptions, "/", nil)
+		assert.Nil(t, err)
+
+		w := httptest.NewRecorder()
+		h := http.HandlerFunc(c.Health())
+		h.ServeHTTP(w, req)
+
+		assert.Equal(t, w.Code, http.StatusNoContent)
+		assert.Equal(t, w.Header().Get("Allow"), "HEAD, GET, OPTIONS")
+		assert.Equal(t, w.Body.String(), "")
+	})
+
 	t.Run("non-GET requests", func(t *testing.T) {
 		c := &Config{}
 
@@ -41,6 +57,28 @@ func TestHealth(t *testing.T) {
 
 			assert.Equal(t, w.Code, http.StatusMethodNotAllowed)
 		}
+	})
+
+	t.Run("HEAD request", func(t *testing.T) {
+		c := &Config{
+			Check: func(ctx context.Context) error {
+				return nil
+			},
+		}
+
+		req, err := http.NewRequest(http.MethodHead, "/", nil)
+		assert.Nil(t, err)
+
+		w := httptest.NewRecorder()
+		h := http.HandlerFunc(c.Health())
+		h.ServeHTTP(w, req)
+
+		cl, err := strconv.Atoi(w.Header().Get("Content-Length"))
+		assert.Nil(t, err)
+
+		assert.Equal(t, w.Code, http.StatusOK)
+		assert.Greater(t, cl, 70)
+		assert.Empty(t, w.Body.String())
 	})
 
 	t.Run("successful healthcheck", func(t *testing.T) {

@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"net/http"
 	"reflect"
+	"strconv"
 	"time"
 )
 
@@ -36,7 +37,7 @@ func (c *Config) Health() handler {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
-		case http.MethodGet:
+		case http.MethodHead, http.MethodGet:
 			w.Header().Set("Content-Type", "application/json")
 
 			err := c.Check(r.Context())
@@ -83,8 +84,19 @@ func (c *Config) Health() handler {
 				info = string(data)
 			}
 
+			if r.Method == http.MethodHead {
+				w.Header().Set("Content-Length",
+					strconv.Itoa(len(info)))
+			}
+
 			w.WriteHeader(http.StatusOK)
-			fmt.Fprint(w, info)
+
+			if r.Method == http.MethodGet {
+				fmt.Fprint(w, info)
+			}
+		case http.MethodOptions:
+			w.Header().Set("Allow", "HEAD, GET, OPTIONS")
+			w.WriteHeader(http.StatusNoContent)
 		default:
 			http.Error(w, "405 method not allowed",
 				http.StatusMethodNotAllowed)
