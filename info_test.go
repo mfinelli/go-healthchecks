@@ -37,7 +37,7 @@ func TestInfo(t *testing.T) {
 
 		assert.Equal(t, w.Code, http.StatusNoContent)
 		assert.Equal(t, w.Header().Get("Allow"), "HEAD, GET, OPTIONS")
-		assert.Equal(t, w.Body.String(), "")
+		assert.Empty(t, w.Body.String())
 	})
 
 	t.Run("HEAD request", func(t *testing.T) {
@@ -58,7 +58,7 @@ func TestInfo(t *testing.T) {
 		assert.Equal(t, w.Header().Get("Content-Type"),
 			"application/json")
 		assert.Equal(t, w.Header().Get("Content-Length"), "46")
-		assert.Equal(t, w.Body.String(), "")
+		assert.Empty(t, w.Body.String())
 	})
 
 	t.Run("non-GET requests", func(t *testing.T) {
