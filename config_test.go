@@ -20,8 +20,6 @@ import "net/http"
 
 var nonGetMethods = []string{
 	http.MethodDelete,
-	http.MethodHead,
-	http.MethodOptions,
 	http.MethodPatch,
 	http.MethodPost,
 	http.MethodPut,

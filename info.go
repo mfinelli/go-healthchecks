@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 // The Info route provides simple information about the service.
@@ -42,10 +43,18 @@ func (c *Config) Info() handler {
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
+		case http.MethodHead:
+			w.Header().Set("Content-Type", "application/json")
+			w.Header().Set("Content-Length",
+				strconv.Itoa(len(info)))
+			w.WriteHeader(http.StatusOK)
 		case http.MethodGet:
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
 			fmt.Fprint(w, info)
+		case http.MethodOptions:
+			w.Header().Set("Allow", "HEAD, GET, OPTIONS")
+			w.WriteHeader(http.StatusNoContent)
 		default:
 			http.Error(w, "405 method not allowed",
 				http.StatusMethodNotAllowed)

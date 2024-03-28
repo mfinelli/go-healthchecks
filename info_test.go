@@ -25,6 +25,42 @@ import (
 )
 
 func TestInfo(t *testing.T) {
+	t.Run("OPTIONS request", func(t *testing.T) {
+		c := &Config{}
+
+		req, err := http.NewRequest(http.MethodOptions, "/", nil)
+		assert.Nil(t, err)
+
+		w := httptest.NewRecorder()
+		h := http.HandlerFunc(c.Info())
+		h.ServeHTTP(w, req)
+
+		assert.Equal(t, w.Code, http.StatusNoContent)
+		assert.Equal(t, w.Header().Get("Allow"), "HEAD, GET, OPTIONS")
+		assert.Equal(t, w.Body.String(), "")
+	})
+
+	t.Run("HEAD request", func(t *testing.T) {
+		c := &Config{
+			Version:   "ver",
+			GitSha:    "sha",
+			BuildDate: "date",
+		}
+
+		req, err := http.NewRequest(http.MethodHead, "/", nil)
+		assert.Nil(t, err)
+
+		w := httptest.NewRecorder()
+		h := http.HandlerFunc(c.Info())
+		h.ServeHTTP(w, req)
+
+		assert.Equal(t, w.Code, http.StatusOK)
+		assert.Equal(t, w.Header().Get("Content-Type"),
+			"application/json")
+		assert.Equal(t, w.Header().Get("Content-Length"), "46")
+		assert.Equal(t, w.Body.String(), "")
+	})
+
 	t.Run("non-GET requests", func(t *testing.T) {
 		c := &Config{}
 
