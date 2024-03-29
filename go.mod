@@ -1,4 +1,4 @@
-module go.finelli.dev/healthchecks
+module go.finelli.dev/healthchecks/v2
 
 go 1.21.6
 
