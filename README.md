@@ -32,15 +32,15 @@ func main() {
                 panic(err)
         }
 
-        hc := healthchecks.Config{
+        hc := healthcheck.Config{
                 // you can omit any of these that you don't wish to expose
                 BuildDate: date,
                 GitSha:    commit,
                 Version:   version,
 
                 // You can also define a function somewhere else that returns
-                // the healthchecks.Healthcheck type:
-                // func MyHealthcheckSetup(...) healthchecks.Healthcheck {}
+                // the healthcheck.Healthcheck type:
+                // func MyHealthcheckSetup(...) healthcheck.Healthcheck {}
                 // Check: MyHealthcheckSetup(...),
                 Check: func(ctx context.Context) error {
                         if err := db.Ping(ctx); err != nil {
@@ -76,7 +76,7 @@ go build -o main \
 ## license
 
 ```
-Copyright 2024 Mario Finelli
+Copyright 2024-2026 Mario Finelli
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
